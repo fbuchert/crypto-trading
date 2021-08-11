@@ -1,17 +1,68 @@
-# Cryptocurrency Trading Platform
+# Cryptocurrency Trading Application
 ![License](https://img.shields.io/github/license/fbuchert/crypto-trading)
 
 This repository contains the implementation of an event-based cryptocurrency trading platform, which is run
 as monolithic application. The platform has been used to trade algorithmic, quantitative trading strategies 
 on cryptocurrencies for the last two years. 
 
-## Structure
-The repository implements four main components:
+## Setup & Run
+
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+The `ExampleStrategy` class defined in `./strategy/strategy_implementations/example_strategy.py` implements a naive
+strategy, which trades based on OHLCV-bars of arbitrary frequency. It takes buys n instrument (or keeps holding it),
+for 'green' candles, i.e. close > open and sells n price. It sells
+
+The trading strategy can be started by running:
+```
+python main.py
+```
+
+The strategy configuration is read from `config.yaml` with the following structure:
+```
+exchange:
+    name: 'ftx'
+    subaccount: < name of ftx subaccount >
+    api_keys:
+        key: < ftx_api_key >
+        secret: < ftx_api_secret >
+
+portfolio_manager: 'Portfolio' (name of portfolio module to be used)
+strategy: 'ExampleStrategy' (name of portfolio module to be used)
+
+instruments:
+    - 'btc_usd_perp' (platform internal instrument names as set in './core/const.py'
+    - 'eth_usd_perp'
+    - ...
+
+strategy_params:
+    bar_freq: < bar frequency > (e.g. '60m' for hour bars)
+    price_df_window: < length of price history strategy maintains in minutes >
+
+trading_volume: < USD volume allocated to stratetgy, e.g 10 > 
+
+position_save_path: < path to save current position to >
+execution_save_path: < path to save execution engine dictionaries to >
+```
+
+## Testing
+Unit tests of the most important system components are implemented in `./test` and can be run by
+```
+python -m unittest discover -v
+```
+
+<hr style="border:1px solid"> </hr>
+
+## Repository Structure
+The repository implements four main modules, which form the basis of the trading platform:
 - Strategy module (`./strategy`)
 - Exchange clients (`./clients`)
 - Execution engine (`./execution`)
 - Portfolio module (`./portfolio`)
-
 These four components handle different tasks of the trading application as explained in the following.
 
 ---
@@ -69,60 +120,8 @@ for all traded assets.
 
 Specific strategy implementations, such as `ExampleStrategy` (`./strategy/example_strategy.py`), implement the
 abstract base class as well as the `_calculate_target_position(self, price_dfs)`-function, which contains the strategy trading logic.
-Given the price bars for all traded assets, the function calculates and returns the target positions. Finally, the strategy
-submits trades to the execution engine based on the difference between the current position and the target position.
-
-<hr style="border:1px solid"> </hr>
-
-## Setup & Run
-
-```
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-The `ExampleStrategy` class defined in `./strategy/strategy_implementations/example_strategy.py` implements a naive 
-strategy, which trades based on OHLCV-bars of arbitrary frequency. It takes buys n instrument (or keeps holding it), 
-for 'green' candles, i.e. close > open and sells n price. It sells  
-
-The trading strategy can be started by running:
-```
-python main.py
-```
-
-The strategy configuration is read from `config.yaml` with the following structure:
-```
-exchange:
-    name: 'ftx'
-    subaccount: < name of ftx subaccount >
-    api_keys:
-        key: < ftx_api_key >
-        secret: < ftx_api_secret >
-
-portfolio_manager: 'Portfolio' (name of portfolio module to be used)
-strategy: 'ExampleStrategy' (name of portfolio module to be used)
-
-instruments:
-    - 'btc_usd_perp' (platform internal instrument names as set in './core/const.py'
-    - 'eth_usd_perp'
-    - ...
-
-strategy_params:
-    bar_freq: < bar frequency > (e.g. '60m' for hour bars)
-    price_df_window: < length of price history strategy maintains in minutes >
-
-trading_volume: < USD volume allocated to stratetgy, e.g 10 > 
-
-position_save_path: < path to save current position to >
-execution_save_path: < path to save execution engine dictionaries to >
-```
-
-## Testing
-Unit tests of the most important system components are implemented in `./test` and can be run by
-```
-python -m unittest discover -v
-```
+Given the price bars for all traded assets, the function calculates and returns the target position for each traded instrument.
+Based on the difference between the current position and the target position, the strategy submits trades to the execution engine.
 
 ## TODOs
 - Implement historical data management (using HDF5)
