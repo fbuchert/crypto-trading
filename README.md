@@ -1,5 +1,5 @@
 # Cryptocurrency Trading Application
-![License](https://img.shields.io/github/license/fbuchert/crypto-trading)
+![License](https://img.shields.io/github/license/fbuchert/crypto-trading?label=license)
 
 This repository contains the implementation of an event-based cryptocurrency trading platform, which is run
 as monolithic application. The platform has been used to trade algorithmic, quantitative trading strategies 
