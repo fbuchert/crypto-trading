@@ -1,0 +1,6 @@
+*.yaml
+
+.idea
+data
+logs
+venv
