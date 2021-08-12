@@ -1,5 +1,7 @@
 *.yaml
+*.pyc
 
+.DS_Store
 .idea
 data
 logs
