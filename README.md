@@ -2,10 +2,10 @@
 ![License](https://img.shields.io/github/license/fbuchert/crypto-trading)
 
 This repository contains the implementation of an event-based cryptocurrency trading framework, which can be used to run
-trading strategies as monolithic applications. 
+trading strategies as monolithic applications.
 
-The framework is designed to be modular as well as extensible and allows rapid deployment trading strategies 
-over multiple instruments. The implementation has been used to trade algorithmic, quantitative trading strategies 
+The framework is designed to be modular as well as extensible and allows rapid deployment trading strategies
+over multiple instruments. The implementation has been used to trade algorithmic, quantitative trading strategies
 in cryptocurrency markets.
 
 ## Overview / Structure
@@ -34,10 +34,10 @@ exhibits an uniform interface.
 ### Execution Engine
 Implementations of execution engines are located in the folder `./exeuction`.
 
-The execution engine handles the execution of orders, i.e. changes of positions of the trading strategy, and 
-has to be implemented separately for every supported exchange. All exchange-specific execution engines should implement 
-the abstract class `BaseExecutionEngine` defined in `./execution/base_execution_engine.py`, which provides 
-exchange-independent base functionalities. For now, only an implementation of an FTX execution engine supporting market 
+The execution engine handles the execution of orders, i.e. changes of positions of the trading strategy, and
+has to be implemented separately for every supported exchange. All exchange-specific execution engines should implement
+the abstract class `BaseExecutionEngine` defined in `./execution/base_execution_engine.py`, which provides
+exchange-independent base functionalities. For now, only an implementation of an FTX execution engine supporting market
 orders is available.
 
 #### Saving information on order execution
@@ -52,9 +52,9 @@ market order.
 
 ---
 ### Portfolio
-The portfolio module (implementation located in `./portfolio`) is used to keep track of all positions of the trading 
-strategy. It handles executed trades and updates all positions accordingly. Additionally, it persists the positions 
-to a pickle file at every update at `position_save_path` (set in `config.yaml`), which allows for loading the current 
+The portfolio module (implementation located in `./portfolio`) is used to keep track of all positions of the trading
+strategy. It handles executed trades and updates all positions accordingly. Additionally, it persists the positions
+to a pickle file at every update at `position_save_path` (set in `config.yaml`), which allows for loading the current
 positioning upon a possible restart of the trading strategy.
 
 ---
@@ -62,18 +62,18 @@ positioning upon a possible restart of the trading strategy.
 Implementations of different trading strategies are located in `./strategy`.
 
 The strategy module is the central element of the trading application. It has references to instances of all previously
-described modules, i.e. exchange clients, portfolio module and execution engine and is the starting point of the 
-application. As an example, an extensible implementation of trading strategies based on price bars is provided. 
+described modules, i.e. exchange clients, portfolio module and execution engine and is the starting point of the
+application. As an example, an extensible implementation of trading strategies based on price bars is provided.
 
 
 The `BarStrategyBase`-class is an abstract base class, which implements the basic functionality of trading strategies developed on bars (OHLCV, tick bars, volume bars, etc.).
 Specific strategy implementations, such as `ExampleStrategy`, implement the
 abstract base class as well as the `_calculate_target_position(self, price_dfs)`-function, which contains the trading logic.
-Given the price bars for all traded assets, the `_calculate_target_position(self, price_dfs)`-function calculates and 
+Given the price bars for all traded assets, the `_calculate_target_position(self, price_dfs)`-function calculates and
 returns the target position for each traded instrument. Based on the difference between the current position and the target position, the strategy submits trades to the execution engine.
 
-The provided example strategy implements a naive long-only strategy, which trades based on OHLCV-bars of arbitrary 
-frequency. The strategy takes a long position for every instrument, whose price increased over the last bar, 
+The provided example strategy implements a naive long-only strategy, which trades based on OHLCV-bars of arbitrary
+frequency. The strategy takes a long position for every instrument, whose price increased over the last bar,
 i.e. close > open holds. For any instrument, whose price decreased over the last bar, i.e. close < open, it takes a
 position of 0.
 
